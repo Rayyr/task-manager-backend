@@ -1,11 +1,12 @@
-//reads the results of express-validator rules
-import { validationResult } from "express-validator";
-import ApiError from "../utils/ApiError";
+import { validationResult } from 'express-validator';
+import ApiError from '../utils/ApiError.js';
 
-export const x = (req, res, next) => {
+const validate = (req, res, next) => {
   const result = validationResult(req);
   if (result.isEmpty()) return next();
 
   const errors = result.array().map((e) => ({ field: e.path, message: e.msg }));
-  next(new ApiError(400, "Validation failed", errors));
+  next(new ApiError(400, 'Validation failed', errors));
 };
+
+export default validate;
