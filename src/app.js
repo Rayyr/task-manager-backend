@@ -3,6 +3,9 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
+import { notFound } from "./middleware/error.js";
+import { errorHandler } from "./middleware/error.js";
+import routes from "./routes/index.js";
 
 export const app = express();
 
@@ -22,3 +25,7 @@ app.use(mongoSanitize());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+app.use("/api/v1",routes);//for all api routes
+app.use(notFound);//for invalid routes (unknown urls)
+app.use(errorHandler);
