@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
       match: [/^\s+@\s+\.\s+$/, "Please provide a valid email"],
     },
     password: {
+      /*         will be stored as hashed text not plain*/
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
