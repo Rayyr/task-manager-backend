@@ -23,7 +23,37 @@ export const register = asyncHandler(async (req, res) => {
   });
   return res.status(201).json({
     success: true,
-    token: generateToken(User._id),
+    /*  token: generateToken(User._id), */
     newUser,
+  });
+});
+
+//@route  POST /api/v1/auth/login
+//@access Public
+export const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne(
+    { email: email.toLowerCase() }.select(+password),
+  );
+
+  //wrong email
+  if (!user) {
+    throw new ApiError(401, "Invalid email");
+  }
+
+  const isSame = await bcrypt.compare(password, user.password);
+  //wrong password
+  if (!isSame) {
+    throw new ApiError(401, "Invalid password");
+  }
+
+  if (!user.isActive) {
+    throw new ApiError(403, "Your account has been deactivated");
+  }
+  //correct credentials
+  return res.status(200).json({
+    success: true,
+    user: user,
+    token: generateToken(user._id),
   });
 });

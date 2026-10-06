@@ -5,3 +5,5 @@ export const generateToken = (userId) => {
     expiresIn: process.env.JWT_EXPIRES_IN || "15m",
   });
 };
+
+//token payload:userid + automaticallu issudAt , expiryTime are being added automatically
