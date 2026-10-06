@@ -37,5 +37,11 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+//to prevent the passowrd ro be retirned in the res of req , الا if we expliccitly we need it so we can use select("+password")
+userSchema.set("toJSON",{
+    transform:(doc,ret)=>{
+        delete ret.password;
+    }
+})
 const User = mongoose.model("User", userSchema);
 export default User;
