@@ -9,9 +9,9 @@ import ApiError from "../utils/ApiError.js";
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (password.length < 6) {
+  /* if (password.length < 6) {
     throw new ApiError(400, "Password must be at least 6 characters");
-  }
+  } */
   //hash the password
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
