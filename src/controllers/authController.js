@@ -32,9 +32,7 @@ export const register = asyncHandler(async (req, res) => {
 //@access Public
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne(
-    { email: email.toLowerCase() }.select(+password),
-  );
+  const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
 
   //wrong email
   if (!user) {
