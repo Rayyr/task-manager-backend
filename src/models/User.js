@@ -33,14 +33,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    passwordChangedAt:{
+      type:Date
+    },
   },
   { timestamps: true },
 );
 
-//to prevent the passowrd ro be retirned in the res of req , الا if we expliccitly we need it so we can use select("+password")
+//to prevent the passowrd ro be returned in the res of req , الا if we expliccitly we need it so we can use select("+password")
 userSchema.set("toJSON",{
     transform:(doc,ret)=>{
         delete ret.password;
+        delete ret.passwordChangedAt;
     }
 })
 const User = mongoose.model("User", userSchema);

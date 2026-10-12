@@ -55,3 +55,35 @@ export const login = asyncHandler(async (req, res) => {
     token: generateToken(user._id),
   });
 });
+
+
+
+//@route PUT /api/v1/auth/me
+//@access Private
+export const getMe=asyncHandler(async(req,res)=>{
+return res.status(200).json({success:true,user:req.user});
+});
+
+
+
+// @route   PUT /api/v1/auth/change-password
+// @access  Private
+export const changePassword=asyncHandler(async(req,res)=>{
+
+  const {currentPassword,newPassword}=req.body;
+  const user=await User.findById(req.user._id).select("+password");
+
+  if(!(await bcrypt.compare(currentPassword,user.password))){
+    throw new ApiError(401,"Current password is incorrect");
+  }
+user.password = await bcrypt.hash(newPassword, 12);
+user.passwordChangedAt = new Date(Date.now() - 1000);   // the hook used to do this for you
+
+await user.save();
+
+return res.status(200).json({
+  success:true,
+  message:"Password updated",
+  token:generateToken(user._id)
+});
+});
