@@ -7,27 +7,12 @@ import { protect } from "../middleware/auth.js";
 import { authorize } from "../middleware/auth.js";
 import { getMe } from "../controllers/authController.js";
 import { changePassword } from "../controllers/authController.js";
-
+import { registerRules,loginRules,changePasswordRules } from "../validators/authValidators.js";
 const router=express.Router();
  
-const registerRules=[
 
-    body("email").isEmail().withMessage("Please provide a valid email").notEmpty().withMessage("Email is required"),
-    body("password").isString().withMessage("Password must be a string").notEmpty().withMessage("Password is required")
-    .isLength({min:6}).withMessage("Password must be at least 6 characters"),
-    body("name").trim().notEmpty().withMessage("Name is required").isLength({max:50}).withMessage("Name cannot exceed 50 characters")
-];
-
-const loginRules=[
-    body("email").isEmail().withMessage("Please provide a valid email").notEmpty().withMessage("Email is required"),
-    body("password").isString().withMessage("Password must be a string").notEmpty().withMessage("Password is required")
-];
-
-const changePasswordRules=[
-body("currentPassword").isString().notEmpty().withMessage("Current password is required"),
-body("newPassword").isString().withMessage("New Password must be a string").
-isLength({min:6}).withMessage("New password must be at least 6 characters")
-];
+ 
+ 
 //max 20 login attepts per IP every 15 mins
 const loginlimiter=rateLimit({
 

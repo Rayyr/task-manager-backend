@@ -1,76 +1,21 @@
 import express from "express";
 import { createTask,getTask,getTasks,updateTask,updateTaskStatus,deleteTask } from "../controllers/taskController.js";
-import { body, param } from 'express-validator';
 import validate from '../middleware/validate.js';
 import { protect } from '../middleware/auth.js';
-import { TASK_STATUS, TASK_PRIORITY } from '../config/constants.js';
-
+import { idRule,createTaskRules,updateTaskRules,statusRules } from "../validators/taskValidators.js";
 
 const router=express.Router();
-
-//validation (Rules)
-const idRule=param("id").isMongoId().withMessage("Invalid task id");
-
-
-// Rules shared by create and update (each field is optional)
-const fieldRules = [
-  body('description')
-    .optional({ values: 'null' })
-    .isString().withMessage('Description must be a string')
-    .isLength({ max: 2000 }).withMessage('Description cannot exceed 2000 characters'),
-  body('status')
-    .optional()
-    .isIn(TASK_STATUS).withMessage(`Status must be one of: ${TASK_STATUS.join(', ')}`),
-  body('priority')
-    .optional()
-    .isIn(TASK_PRIORITY).withMessage(`Priority must be one of: ${TASK_PRIORITY.join(', ')}`),
-  body('dueDate')
-    .optional({ values: 'null' })
-    .isISO8601().withMessage('dueDate must be a valid date, e.g. 2026-12-31')
-    .toDate(),
-  body('tags')
-    .optional()
-    .isArray({ max: 10 }).withMessage('tags must be an array of at most 10 items'),
-  body('tags.*')
-    .isString().withMessage('Each tag must be a string')
-    .trim()
-    .isLength({ min: 1, max: 30 }).withMessage('Each tag must be 1 to 30 characters'),
-];
-
-const createRules = [
-  body('title')
-    .isString().withMessage('Title must be a string')
-    .trim()
-    .notEmpty().withMessage('Title is required')
-    .isLength({ max: 150 }).withMessage('Title cannot exceed 150 characters'),
-  ...fieldRules,
-];
-
-const updateRules = [
-  body('title')
-    .optional()
-    .isString().withMessage('Title must be a string')
-    .trim()
-    .notEmpty().withMessage('Title cannot be empty')
-    .isLength({ max: 150 }).withMessage('Title cannot exceed 150 characters'),
-  ...fieldRules,
-];
-
-const statusRules = [
-  body('status')
-    .isIn(TASK_STATUS).withMessage(`Status must be one of: ${TASK_STATUS.join(', ')}`),
-];
-
+ 
 
 // Every task route requires a logged-in user
 router.use(protect);
 
-router.route("/").get(getTasks).post(createRules,validate,createTask);
+router.route("/").get(getTasks).post(createTaskRules,validate,createTask);
 
 router
   .route('/:id')
   .get(idRule, validate, getTask)
-  .put(idRule, updateRules, validate, updateTask)
+  .put(idRule, updateTaskRules, validate, updateTask)
   .delete(idRule, validate, deleteTask);
 
 router.patch('/:id/status', idRule, statusRules, validate, updateTaskStatus);
