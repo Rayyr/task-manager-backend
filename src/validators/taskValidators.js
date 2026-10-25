@@ -26,6 +26,8 @@ const fieldRules = [
     .isString().withMessage('Each tag must be a string')
     .trim()
     .isLength({ min: 1, max: 30 }).withMessage('Each tag must be 1 to 30 characters'),
+  
+    body("project").optional({values:"null"}).isMongoId().withMessage("Invalid project id"),
 ];
 
 export const createTaskRules = [

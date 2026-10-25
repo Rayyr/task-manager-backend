@@ -31,8 +31,10 @@ export const errorHandler = (err, req, res, next) => {
     message = `Invalid value for ${err.path}`;
   } else if (err.code === 11000) {
     status = 409;
-    message = `${Object.keys(err.keyValue || {})[0] || 'value'} already exists`;
-  } else if (err.name === 'JsonWebTokenError') {
+        const field = Object.keys(err.keyValue || {}).find((k) => k !== "owner") || "value";
+    message = `${field} already exists`;
+    
+   } else if (err.name === 'JsonWebTokenError') {
     status = 401;
     message = 'Invalid token';
   } else if (err.name === 'TokenExpiredError') {
